@@ -9,9 +9,8 @@ export BACKUP_DIR="/media/lzkill/m3/vostro"
 help()
 {
    echo ""
-   echo "Usage: $0 [-b | -c | -d | -i | -r]"
+   echo "Usage: $0 [-b | -d | -i | -r]"
    echo -e "\t-b Backup"
-   echo -e "\t-c Configure"
    echo -e "\t-d Download"
    echo -e "\t-i Install"
    echo -e "\t-r Restore"
@@ -28,9 +27,12 @@ backup() {
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.bashrc" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.docker-remote-cli" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.ssh" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.gnupg" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" --exclude "$HOME_DIR/.var/app/*/cache" "$HOME_DIR/.var/app" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.visualvm/2.0.5/repository" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/rdp" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Documents" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Downloads" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Projects" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Software" "$BACKUP_DIR/"
 
@@ -41,10 +43,6 @@ backup() {
     sync
 }
 
-configure() {
-    usermod -aG docker lzkill
-}
-
 download() {
     wget -P "$HOME_DIR/Downloads" https://megalink.dl.sourceforge.net/project/jxplorer/jxplorer/version%203.3.1.2/jxplorer-3.3.1.2-linux-installer.run
 }
@@ -53,7 +51,10 @@ global-install() {
     apt install -y \
     vim htop google-chrome-stable \
     git git-flow curl httpie gawk xsane nautilus-dropbox \
-    virtualbox synaptic
+    virtualbox synaptic gnome-tweak-tool nautilus-admin \
+    git-lfs
+
+    git-lfs install
 
     # Forticlient
     wget -O - https://repo.fortinet.com/repo/6.4/ubuntu/DEB-GPG-KEY | apt-key add -
@@ -72,29 +73,33 @@ global-install() {
     stable"
     apt-get update
     apt-get install -y docker-ce docker-ce-cli containerd.io
+    usermod -aG docker lzkill
 }
 
 local-install() {
-    flatpak install -y com.github.debauchee.barrier
-    flatpak install -y com.spotify.Client
-    flatpak install -y org.inkscape.Inkscape
-    flatpak install -y org.gimp.GIMP
-    flatpak install -y com.microsoft.Teams
-    flatpak install -y us.zoom.Zoom
-    flatpak install -y com.obsproject.Studio
-    flatpak install -y org.flameshot.Flameshot
-    flatpak install -y nl.hjdskes.gcolor3
-    flatpak install -y edu.mit.Scratch
-    flatpak install -y org.remmina.Remmina
+    flatpak install flathub -y com.nextcloud.desktopclient.nextcloud
+    flatpak install flathub -y com.github.debauchee.barrier
+    flatpak install flathub -y com.spotify.Client
+    flatpak install flathub -y org.inkscape.Inkscape
+    flatpak install flathub -y org.gimp.GIMP
+    flatpak install flathub -y com.microsoft.Teams
+    flatpak install flathub -y us.zoom.Zoom
+    flatpak install flathub -y com.obsproject.Studio
+    flatpak install flathub -y org.flameshot.Flameshot
+    flatpak install flathub -y nl.hjdskes.gcolor3
+    flatpak install flathub -y edu.mit.Scratch
+    flatpak install flathub -y org.remmina.Remmina
+    flatpak install flathub -y com.github.tchx84.Flatseal
+    flatpak install flathub -y com.skype.Client
 
-    flatpak install -y org.gnome.meld
-    flatpak install -y org.eclipse.Java
-    flatpak install -y org.apache.netbeans
-    flatpak install -y io.dbeaver.DBeaverCommunity
-    flatpak install -y com.visualstudio.code
-    flatpak install -y com.getpostman.Postman
-    flatpak install -y com.axosoft.GitKraken
-    flatpak install -y net.poedit.Poedit
+    flatpak install flathub -y org.gnome.meld
+    flatpak install flathub -y org.eclipse.Java
+    flatpak install flathub -y org.apache.netbeans
+    flatpak install flathub -y io.dbeaver.DBeaverCommunity
+    flatpak install flathub -y com.visualstudio.code
+    flatpak install flathub -y com.getpostman.Postman
+    flatpak install flathub -y com.axosoft.GitKraken
+    flatpak install flathub -y net.poedit.Poedit
 
     # nvm
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
@@ -120,9 +125,12 @@ restore() {
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.bashrc" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.docker-remote-cli" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.ssh" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.gnupg" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.var/app" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.visualvm/2.0.5/repository" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/rdp" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Documents" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Downloads" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Projects" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Software" "$HOME_DIR/"
 
@@ -138,11 +146,10 @@ fi
 
 # See https://unix.stackexchange.com/a/337820
 # See https://unix.stackexchange.com/a/269080
-while getopts "bcdir" opt
+while getopts "bdir" opt
 do
    case "$opt" in
       b ) sudo -E bash -c "$(declare -f backup); backup" ;;
-      c ) sudo -E bash -c "$(declare -f configure); configure" ;;
       d ) download ;;
       i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
       r ) sudo -E bash -c "$(declare -f restore); restore" ;;
