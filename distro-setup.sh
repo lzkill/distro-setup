@@ -161,7 +161,7 @@ while getopts "bdir" opt
 do
    case "$opt" in
       b ) sudo -E bash -c "$(declare -f backup); backup" ;;
-      c ) sudo -E bash -c "$(declare -f global-configure); configure" ;;
+      c ) sudo -E bash -c "$(declare -f global-configure); global-configure" && local-configure ;;
       d ) download ;;
       i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
       r ) sudo -E bash -c "$(declare -f restore); restore" ;;
