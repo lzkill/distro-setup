@@ -9,8 +9,9 @@ export BACKUP_DIR="/media/lzkill/m3/vostro"
 help()
 {
    echo ""
-   echo "Usage: $0 [-b | -d | -i | -r]"
+   echo "Usage: $0 -b | -c | -d | -i | -r"
    echo -e "\t-b Backup"
+   echo -e "\t-c Configure"
    echo -e "\t-d Download"
    echo -e "\t-i Install"
    echo -e "\t-r Restore"
@@ -36,11 +37,22 @@ backup() {
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Projects" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Software" "$BACKUP_DIR/"
 
+    rsync "$RSYNC_OPTIONS" /etc/default/locale "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" /etc/docker/daemon.json "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" /usr/local/bin/file.io "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" /usr/local/bin/git-summary "$BACKUP_DIR/"
 
     sync
+}
+
+global-configure() { 
+    usermod -aG docker lzkill
+    locale-gen pt_BR.UTF-8
+}
+
+local-configure() {
+    gsettings set org.gnome.settings-daemon.plugins.power button-power 'suspend'
+    git-lfs install
 }
 
 download() {
@@ -53,8 +65,6 @@ global-install() {
     git git-flow curl httpie gawk xsane nautilus-dropbox \
     virtualbox synaptic gnome-tweak-tool nautilus-admin \
     git-lfs
-
-    git-lfs install
 
     # Forticlient
     wget -O - https://repo.fortinet.com/repo/6.4/ubuntu/DEB-GPG-KEY | apt-key add -
@@ -73,7 +83,6 @@ global-install() {
     stable"
     apt-get update
     apt-get install -y docker-ce docker-ce-cli containerd.io
-    usermod -aG docker lzkill
 }
 
 local-install() {
@@ -134,8 +143,10 @@ restore() {
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Projects" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Software" "$HOME_DIR/"
 
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/etc/default/locale" /
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/etc/docker/daemon.json" /
-    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/usr/local/bin/{file.io,git-summary}" /
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/usr/local/bin/file.io" /
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/usr/local/bin/git-summary" /
 }
 
 if [ $# -eq 0 ]
@@ -150,6 +161,7 @@ while getopts "bdir" opt
 do
    case "$opt" in
       b ) sudo -E bash -c "$(declare -f backup); backup" ;;
+      c ) sudo -E bash -c "$(declare -f global-configure); configure" ;;
       d ) download ;;
       i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
       r ) sudo -E bash -c "$(declare -f restore); restore" ;;
