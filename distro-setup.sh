@@ -30,14 +30,21 @@ backup() {
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.docker-remote-cli" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.ssh" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.gnupg" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.eclipse" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" --exclude "$HOME_DIR/.var/app/*/cache" "$HOME_DIR/.var/app" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/.visualvm/2.0.5/repository" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/VirtualBox" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/google-chrome" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/FortiClient" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/rdp" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Desktop" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Documents" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Downloads" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Dropbox" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Pictures" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Projects" "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" "$HOME_DIR/Software" "$BACKUP_DIR/"
+    rsync "$RSYNC_OPTIONS" "$HOME_DIR/VirtualBox VMs" "$BACKUP_DIR/"
 
     rsync "$RSYNC_OPTIONS" /etc/default/locale "$BACKUP_DIR/"
     rsync "$RSYNC_OPTIONS" /etc/docker/daemon.json "$BACKUP_DIR/"
@@ -138,19 +145,28 @@ restore() {
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.docker-remote-cli" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.ssh" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.gnupg" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.eclipse" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.var/app" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.visualvm/2.0.5/repository" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.config/VirtualBox" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.config/google-chrome" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/.config/FortiClient" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/rdp" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Desktop" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Dropbox" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Documents" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Downloads" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Pictures" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Projects" "$HOME_DIR/"
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/Software" "$HOME_DIR/"
+    rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/VirtualBox VMs" "$HOME_DIR/"
 
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/etc/default/locale" /
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/etc/docker/daemon.json" /
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/usr/local/bin/file.io" /
     rsync "$RSYNC_OPTIONS" "$BACKUP_DIR/usr/local/bin/git-summary" /
+
+    sync
 }
 
 if [ $# -eq 0 ]
