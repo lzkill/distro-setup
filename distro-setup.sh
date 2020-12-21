@@ -61,7 +61,6 @@ global-configure() {
 
 local-configure() {
     gsettings set org.gnome.settings-daemon.plugins.power button-power 'suspend'
-    git-lfs install
 }
 
 download() {
@@ -177,7 +176,7 @@ fi
 
 # See https://unix.stackexchange.com/a/337820
 # See https://unix.stackexchange.com/a/269080
-while getopts "bdir" opt
+while getopts "bcdir" opt
 do
    case "$opt" in
       b ) sudo -E bash -c "$(declare -f backup); backup" ;;
