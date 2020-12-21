@@ -8,14 +8,14 @@ export BACKUP_DIR="/media/lzkill/m3/vostro"
 
 help()
 {
-   echo ""
-   echo "Usage: $0 -b | -c | -d | -i | -r"
-   echo -e "\t-b Backup"
-   echo -e "\t-c Configure"
-   echo -e "\t-d Download"
-   echo -e "\t-i Install"
-   echo -e "\t-r Restore"
-   exit 1
+    echo ""
+    echo "Usage: $0 -b | -c | -d | -i | -r"
+    echo -e "\t-b Backup"
+    echo -e "\t-c Configure"
+    echo -e "\t-d Download"
+    echo -e "\t-i Install"
+    echo -e "\t-r Restore"
+    exit 1
 }
 
 backup() {
@@ -23,43 +23,43 @@ backup() {
     LATEST_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
     mkdir -p "$LATEST_BACKUP_DIR"
     ln -s "$LATEST_BACKUP_DIR" "$BACKUP_DIR/latest"
-
+    
     rsync $RSYNC_OPTIONS \
-        --exclude "$HOME_DIR/.var/app/*/cache" \
-        "$HOME_DIR/.var/app" \
-        "$HOME_DIR/.vimrc" \
-        "$HOME_DIR/.gitconfig" \
-        "$HOME_DIR/.gitignore" \
-        "$HOME_DIR/.bash_aliases" \
-        "$HOME_DIR/.bashrc" \
-        "$HOME_DIR/.dropbox" \
-        "$HOME_DIR/.docker-remote-cli" \
-        "$HOME_DIR/.ssh" \
-        "$HOME_DIR/.gnupg" \
-        "$HOME_DIR/.eclipse" \
-        "$HOME_DIR/.visualvm/2.0.5/repository" \
-        "$HOME_DIR/.config/VirtualBox" \
-        "$HOME_DIR/.config/google-chrome" \
-        "$HOME_DIR/.config/FortiClient" \
-        "$HOME_DIR/rdp" \
-        "$HOME_DIR/Desktop" \
-        "$HOME_DIR/Documents" \
-        "$HOME_DIR/Downloads" \
-        "$HOME_DIR/Dropbox" \
-        "$HOME_DIR/Pictures" \
-        "$HOME_DIR/Projects" \
-        "$HOME_DIR/Software" \
-        "$HOME_DIR/VirtualBox VMs" \
-        /etc/default/locale \
-        /usr/local/bin/file.io \
-        /usr/local/bin/git-summary \
-        "$LATEST_BACKUP_DIR/"
-        #/etc/docker/daemon.json \
-
+    --exclude "$HOME_DIR/.var/app/*/cache" \
+    "$HOME_DIR/.var/app" \
+    "$HOME_DIR/.vimrc" \
+    "$HOME_DIR/.gitconfig" \
+    "$HOME_DIR/.gitignore" \
+    "$HOME_DIR/.bash_aliases" \
+    "$HOME_DIR/.bashrc" \
+    "$HOME_DIR/.dropbox" \
+    "$HOME_DIR/.docker-remote-cli" \
+    "$HOME_DIR/.ssh" \
+    "$HOME_DIR/.gnupg" \
+    "$HOME_DIR/.eclipse" \
+    "$HOME_DIR/.visualvm/2.0.5/repository" \
+    "$HOME_DIR/.config/VirtualBox" \
+    "$HOME_DIR/.config/google-chrome" \
+    "$HOME_DIR/.config/FortiClient" \
+    "$HOME_DIR/rdp" \
+    "$HOME_DIR/Desktop" \
+    "$HOME_DIR/Documents" \
+    "$HOME_DIR/Downloads" \
+    "$HOME_DIR/Dropbox" \
+    "$HOME_DIR/Pictures" \
+    "$HOME_DIR/Projects" \
+    "$HOME_DIR/Software" \
+    "$HOME_DIR/VirtualBox VMs" \
+    /etc/default/locale \
+    /usr/local/bin/file.io \
+    /usr/local/bin/git-summary \
+    "$LATEST_BACKUP_DIR/"
+    #/etc/docker/daemon.json \
+    
     sync
 }
 
-global-configure() { 
+global-configure() {
     usermod -aG docker lzkill
     locale-gen pt_BR.UTF-8
 }
@@ -69,7 +69,8 @@ local-configure() {
 }
 
 download() {
-    wget -P "$HOME_DIR/Downloads" https://megalink.dl.sourceforge.net/project/jxplorer/jxplorer/version%203.3.1.2/jxplorer-3.3.1.2-linux-installer.run
+    # jxxplorer
+    wget -P "$HOME_DIR/Downloads" https://bit.ly/34xBDSl
 }
 
 global-install() {
@@ -77,60 +78,61 @@ global-install() {
     vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
     nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
     git-lfs
-
+    
     # Forticlient
     wget -O - https://repo.fortinet.com/repo/6.4/ubuntu/DEB-GPG-KEY | apt-key add -
-    echo "deb [arch=amd64] https://repo.fortinet.com/repo/6.4/ubuntu/ /bionic multiverse" > /etc/apt/sources.list.d/forticlient.list
-    apt-get update
+    echo "deb [arch=amd64] https://repo.fortinet.com/repo/6.4/ubuntu/ /bionic multiverse" > \
+    /etc/apt/sources.list.d/forticlient.list
+    apt update
     apt install -y forticlient
-
+    
     # Docker
     apt install -y \
-        apt-transport-https ca-certificates gnupg-agent software-properties-common
+    apt-transport-https ca-certificates gnupg-agent software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     apt-key fingerprint 0EBFCD88
     add-apt-repository -y \
     "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) \
     stable"
-    apt-get update
-    apt-get install -y docker-ce docker-ce-cli containerd.io
-
+    apt update
+    apt install -y docker-ce docker-ce-cli containerd.io
+    
     apt autoremove -y
     apt autoclean -y
 }
 
 local-install() {
     flatpak install flathub -y \
-        com.nextcloud.desktopclient.nextcloud \
-        com.github.debauchee.barrier \
-        com.spotify.Client \
-        org.inkscape.Inkscape \
-        org.gimp.GIMP \
-        com.microsoft.Teams \
-        us.zoom.Zoom \
-        com.obsproject.Studio \
-        org.flameshot.Flameshot \
-        nl.hjdskes.gcolor3 \
-        edu.mit.Scratch \
-        org.remmina.Remmina \
-        com.github.tchx84.Flatseal \
-        com.skype.Client \
-        org.gnome.meld \
-        org.eclipse.Java \
-        org.apache.netbeans \
-        io.dbeaver.DBeaverCommunity \
-        com.visualstudio.code \
-        com.getpostman.Postman \
-        com.axosoft.GitKraken \
-        net.poedit.Poedit
-
+    com.nextcloud.desktopclient.nextcloud \
+    com.github.debauchee.barrier \
+    com.spotify.Client \
+    org.inkscape.Inkscape \
+    org.gimp.GIMP \
+    com.microsoft.Teams \
+    us.zoom.Zoom \
+    com.obsproject.Studio \
+    org.flameshot.Flameshot \
+    nl.hjdskes.gcolor3 \
+    edu.mit.Scratch \
+    org.remmina.Remmina \
+    com.github.tchx84.Flatseal \
+    com.skype.Client \
+    org.gnome.meld \
+    org.eclipse.Java \
+    org.apache.netbeans \
+    io.dbeaver.DBeaverCommunity \
+    com.visualstudio.code \
+    com.getpostman.Postman \
+    com.axosoft.GitKraken \
+    net.poedit.Poedit
+    
     # nvm
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     nvm install lts/*
-
+    
     # SDKManager
     curl -s "https://get.sdkman.io" | bash
     export SDKMAN_DIR="/home/lzkill/.sdkman"
@@ -148,7 +150,7 @@ restore() {
 }
 
 if [ $# -eq 0 ]
-  then
+then
     echo "No option given";
     help
 fi
@@ -157,13 +159,13 @@ fi
 # See https://unix.stackexchange.com/a/269080
 while getopts "bcdir" opt
 do
-   case "$opt" in
-      b ) sudo -E bash -c "$(declare -f backup); backup" ;;
-      c ) sudo -E bash -c "$(declare -f global-configure); global-configure" && local-configure ;;
-      d ) download ;;
-      i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
-      r ) sudo -E bash -c "$(declare -f restore); restore" ;;
-      ? ) help ;;
-   esac
+    case "$opt" in
+        b ) sudo -E bash -c "$(declare -f backup); backup" ;;
+        c ) sudo -E bash -c "$(declare -f global-configure); global-configure" && local-configure ;;
+        d ) download ;;
+        i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
+        r ) sudo -E bash -c "$(declare -f restore); restore" ;;
+        ? ) help ;;
+    esac
 done
 
