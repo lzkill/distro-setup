@@ -100,6 +100,11 @@ global-install() {
     stable"
     apt update
     apt install -y docker-ce docker-ce-cli containerd.io
+
+    # CEF
+    wget https://cloud.gastecnologia.com.br/cef/warsaw/install/GBPCEFwr64.deb
+    dpkg -i GBPCEFwr64.deb
+    rm GBPCEFwr64.deb
     
     apt autoremove -y
     apt autoclean -y
