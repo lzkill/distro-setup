@@ -22,7 +22,7 @@ backup() {
     BACKUP_TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
     LATEST_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
     mkdir -p "$LATEST_BACKUP_DIR"
-    ln -s "$LATEST_BACKUP_DIR" "$BACKUP_DIR/latest"
+    ln -sfn "$LATEST_BACKUP_DIR" "$BACKUP_DIR/latest"
     
     rsync $RSYNC_OPTIONS \
     --exclude "$HOME_DIR/.var/app/*/cache" \
