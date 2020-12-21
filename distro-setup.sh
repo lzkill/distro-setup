@@ -2,7 +2,7 @@
 
 set -e
 
-export RSYNC_OPTIONS="-ahvRP"
+export RSYNC_OPTIONS="-ahR --info=progress2 --no-inc-recursive"
 export HOME_DIR="/home/lzkill"
 export BACKUP_DIR="/media/lzkill/m3/vostro"
 
@@ -24,35 +24,37 @@ backup() {
     mkdir -p "$LATEST_BACKUP_DIR"
     ln -s "$LATEST_BACKUP_DIR" "$BACKUP_DIR/latest"
 
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.vimrc" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.gitconfig" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.gitignore" "$BACKLATEST_BACKUP_DIRUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.bash_aliases" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.bashrc" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.dropbox" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.docker-remote-cli" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.ssh" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.gnupg" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.eclipse" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" --exclude "$HOME_DIR/.var/app/*/cache" "$HOME_DIR/.var/app" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.visualvm/2.0.5/repository" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/VirtualBox" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/google-chrome" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/.config/FortiClient" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/rdp" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Desktop" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Documents" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Downloads" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Dropbox" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Pictures" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Projects" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/Software" "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" "$HOME_DIR/VirtualBox VMs" "$LATEST_BACKUP_DIR/"
-
-    rsync "$RSYNC_OPTIONS" /etc/default/locale "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" /etc/docker/daemon.json "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" /usr/local/bin/file.io "$LATEST_BACKUP_DIR/"
-    rsync "$RSYNC_OPTIONS" /usr/local/bin/git-summary "$LATEST_BACKUP_DIR/"
+    rsync $RSYNC_OPTIONS \
+        --exclude "$HOME_DIR/.var/app/*/cache" \
+        "$HOME_DIR/.var/app" \
+        "$HOME_DIR/.vimrc" \
+        "$HOME_DIR/.gitconfig" \
+        "$HOME_DIR/.gitignore" \
+        "$HOME_DIR/.bash_aliases" \
+        "$HOME_DIR/.bashrc" \
+        "$HOME_DIR/.dropbox" \
+        "$HOME_DIR/.docker-remote-cli" \
+        "$HOME_DIR/.ssh" \
+        "$HOME_DIR/.gnupg" \
+        "$HOME_DIR/.eclipse" \
+        "$HOME_DIR/.visualvm/2.0.5/repository" \
+        "$HOME_DIR/.config/VirtualBox" \
+        "$HOME_DIR/.config/google-chrome" \
+        "$HOME_DIR/.config/FortiClient" \
+        "$HOME_DIR/rdp" \
+        "$HOME_DIR/Desktop" \
+        "$HOME_DIR/Documents" \
+        "$HOME_DIR/Downloads" \
+        "$HOME_DIR/Dropbox" \
+        "$HOME_DIR/Pictures" \
+        "$HOME_DIR/Projects" \
+        "$HOME_DIR/Software" \
+        "$HOME_DIR/VirtualBox VMs" \
+        /etc/default/locale \
+        /usr/local/bin/file.io \
+        /usr/local/bin/git-summary \
+        "$LATEST_BACKUP_DIR/"
+        #/etc/docker/daemon.json \
 
     sync
 }
@@ -72,9 +74,8 @@ download() {
 
 global-install() {
     apt install -y \
-    vim htop google-chrome-stable \
-    git git-flow curl httpie gawk xsane nautilus-dropbox \
-    virtualbox synaptic gnome-tweak-tool nautilus-admin \
+    vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
+    nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
     git-lfs
 
     # Forticlient
@@ -94,32 +95,35 @@ global-install() {
     stable"
     apt-get update
     apt-get install -y docker-ce docker-ce-cli containerd.io
+
+    apt autoremove -y
+    apt autoclean -y
 }
 
 local-install() {
-    flatpak install flathub -y com.nextcloud.desktopclient.nextcloud
-    flatpak install flathub -y com.github.debauchee.barrier
-    flatpak install flathub -y com.spotify.Client
-    flatpak install flathub -y org.inkscape.Inkscape
-    flatpak install flathub -y org.gimp.GIMP
-    flatpak install flathub -y com.microsoft.Teams
-    flatpak install flathub -y us.zoom.Zoom
-    flatpak install flathub -y com.obsproject.Studio
-    flatpak install flathub -y org.flameshot.Flameshot
-    flatpak install flathub -y nl.hjdskes.gcolor3
-    flatpak install flathub -y edu.mit.Scratch
-    flatpak install flathub -y org.remmina.Remmina
-    flatpak install flathub -y com.github.tchx84.Flatseal
-    flatpak install flathub -y com.skype.Client
-
-    flatpak install flathub -y org.gnome.meld
-    flatpak install flathub -y org.eclipse.Java
-    flatpak install flathub -y org.apache.netbeans
-    flatpak install flathub -y io.dbeaver.DBeaverCommunity
-    flatpak install flathub -y com.visualstudio.code
-    flatpak install flathub -y com.getpostman.Postman
-    flatpak install flathub -y com.axosoft.GitKraken
-    flatpak install flathub -y net.poedit.Poedit
+    flatpak install flathub -y \
+        com.nextcloud.desktopclient.nextcloud \
+        com.github.debauchee.barrier \
+        com.spotify.Client \
+        org.inkscape.Inkscape \
+        org.gimp.GIMP \
+        com.microsoft.Teams \
+        us.zoom.Zoom \
+        com.obsproject.Studio \
+        org.flameshot.Flameshot \
+        nl.hjdskes.gcolor3 \
+        edu.mit.Scratch \
+        org.remmina.Remmina \
+        com.github.tchx84.Flatseal \
+        com.skype.Client \
+        org.gnome.meld \
+        org.eclipse.Java \
+        org.apache.netbeans \
+        io.dbeaver.DBeaverCommunity \
+        com.visualstudio.code \
+        com.getpostman.Postman \
+        com.axosoft.GitKraken \
+        net.poedit.Poedit
 
     # nvm
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
@@ -139,36 +143,7 @@ local-install() {
 
 restore() {
     LATEST_BACKUP_DIR="$BACKUP_DIR/latest"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.vimrc" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.gitconfig" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.gitignore" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.bash_aliases" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.bashrc" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.dropbox" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.docker-remote-cli" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.ssh" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.gnupg" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.eclipse" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.var/app" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.visualvm/2.0.5/repository" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.config/VirtualBox" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.config/google-chrome" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/.config/FortiClient" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/rdp" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Desktop" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Dropbox" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Documents" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Downloads" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Pictures" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Projects" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/Software" "$HOME_DIR/"
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/VirtualBox VMs" "$HOME_DIR/"
-
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/etc/default/locale" /
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/etc/docker/daemon.json" /
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/usr/local/bin/file.io" /
-    rsync "$RSYNC_OPTIONS" "$LATEST_BACKUP_DIR/usr/local/bin/git-summary" /
-
+    rsync $RSYNC_OPTIONS "$LATEST_BACKUP_DIR/*" /
     sync
 }
 
