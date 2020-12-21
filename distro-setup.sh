@@ -51,15 +51,18 @@ backup() {
     "$HOME_DIR/Software" \
     "$HOME_DIR/VirtualBox VMs" \
     /etc/default/locale \
+    /etc/hostname \
+    /etc/hosts \
+    /etc/docker/daemon.json \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
     "$LATEST_BACKUP_DIR/"
-    #/etc/docker/daemon.json \
     
     sync
 }
 
 global-configure() {
+    hostname vostro
     usermod -aG docker lzkill
     locale-gen pt_BR.UTF-8
 }
