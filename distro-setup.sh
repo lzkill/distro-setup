@@ -69,6 +69,7 @@ global-configure() {
 
 local-configure() {
     gsettings set org.gnome.settings-daemon.plugins.power button-power 'suspend'
+    gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 }
 
 download() {
