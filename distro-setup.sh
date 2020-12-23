@@ -2,95 +2,102 @@
 
 set -e
 
-export RSYNC_OPTIONS="-ahR --info=progress2 --no-inc-recursive"
-export HOME_DIR="/home/lzkill"
-export BACKUP_DIR="/media/lzkill/m3/vostro"
+export home_dir="/home/lzkill"
+export backup_dir="/media/lzkill/m3/vostro"
+export rsync_options="-ahR --info=progress2 --no-inc-recursive"
 
-help()
-{
+help() {
     echo ""
-    echo "Usage: $0 -b | -c | -d | -i | -r"
+    echo "Usage: $0 -b | -c | -i | -r"
     echo -e "\t-b Backup"
     echo -e "\t-c Configure"
-    echo -e "\t-d Download"
     echo -e "\t-i Install"
     echo -e "\t-r Restore"
     exit 1
 }
 
 backup() {
-    BACKUP_TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-    LATEST_BACKUP_DIR="$BACKUP_DIR/$BACKUP_TIMESTAMP"
-    mkdir -p "$LATEST_BACKUP_DIR"
-    ln -sfn "$LATEST_BACKUP_DIR" "$BACKUP_DIR/latest"
+    local backup_timestamp
+    backup_timestamp=$(date +"%Y%m%d_%H%M%S")
     
-    rsync $RSYNC_OPTIONS \
-    --exclude "$HOME_DIR/.var/app/*/cache" \
-    "$HOME_DIR/.var/app" \
-    "$HOME_DIR/.vimrc" \
-    "$HOME_DIR/.gitconfig" \
-    "$HOME_DIR/.gitignore" \
-    "$HOME_DIR/.bash_aliases" \
-    "$HOME_DIR/.bashrc" \
-    "$HOME_DIR/.dropbox" \
-    "$HOME_DIR/.docker-remote-cli" \
-    "$HOME_DIR/.ssh" \
-    "$HOME_DIR/.gnupg" \
-    "$HOME_DIR/.eclipse" \
-    "$HOME_DIR/.visualvm/2.0.5/repository" \
-    "$HOME_DIR/.config/VirtualBox" \
-    "$HOME_DIR/.config/google-chrome" \
-    "$HOME_DIR/.config/FortiClient" \
-    "$HOME_DIR/rdp" \
-    "$HOME_DIR/Desktop" \
-    "$HOME_DIR/Documents" \
-    "$HOME_DIR/Downloads" \
-    "$HOME_DIR/Dropbox" \
-    "$HOME_DIR/Pictures" \
-    "$HOME_DIR/Projects" \
-    "$HOME_DIR/Software" \
-    "$HOME_DIR/VirtualBox VMs" \
+    local latest_backup_dir
+    latest_backup_dir="$backup_dir/$backup_timestamp"
+    
+    mkdir -p "$latest_backup_dir"
+    ln -sfn "$latest_backup_dir" "$backup_dir/latest"
+    
+    rsync $rsync_options \
+    --exclude "$home_dir/.var/app/*/cache" \
+    "$home_dir/.var/app" \
+    "$home_dir/.vimrc" \
+    "$home_dir/.gitconfig" \
+    "$home_dir/.gitignore" \
+    "$home_dir/.bash_aliases" \
+    "$home_dir/.bashrc" \
+    "$home_dir/.dropbox" \
+    "$home_dir/.docker-remote-cli" \
+    "$home_dir/.ssh" \
+    "$home_dir/.gnupg" \
+    "$home_dir/.eclipse" \
+    "$home_dir/.visualvm/2.0.5/repository" \
+    "$home_dir/.config/VirtualBox" \
+    "$home_dir/.config/google-chrome" \
+    "$home_dir/.config/FortiClient" \
+    "$home_dir/.local/share/gnome-shell/extensions" \
+    "$home_dir/rdp" \
+    "$home_dir/Desktop" \
+    "$home_dir/Documents" \
+    "$home_dir/Downloads" \
+    "$home_dir/Dropbox" \
+    "$home_dir/Pictures" \
+    "$home_dir/Projects" \
+    "$home_dir/Software" \
+    "$home_dir/VirtualBox VMs" \
     /etc/default/locale \
     /etc/hostname \
     /etc/hosts \
     /etc/docker/daemon.json \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
-    "$LATEST_BACKUP_DIR/"
+    "$latest_backup_dir/"
     
     sync
 }
 
-global-configure() {
+global_configure() {
     hostname vostro
     usermod -aG docker lzkill
     locale-gen pt_BR.UTF-8
 }
 
-local-configure() {
+local_configure() {
     gsettings set org.gnome.settings-daemon.plugins.power button-power 'suspend'
     gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 }
 
-download() {
-    # jxxplorer
-    wget -P "$HOME_DIR/Downloads" https://bit.ly/34xBDSl
-}
-
-global-install() {
+global_install() {
     apt install -y \
     vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
     nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
-    git-lfs
+    git-lfs ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0
     
-    # Forticlient
+    install_forticlient
+    install_docker
+    install_warsaw
+    
+    apt autoremove -y
+    apt autoclean -y
+}
+
+install_forticlient() {
     wget -O - https://repo.fortinet.com/repo/6.4/ubuntu/DEB-GPG-KEY | apt-key add -
     echo "deb [arch=amd64] https://repo.fortinet.com/repo/6.4/ubuntu/ /bionic multiverse" > \
     /etc/apt/sources.list.d/forticlient.list
     apt update
     apt install -y forticlient
-    
-    # Docker
+}
+
+install_docker() {
     apt install -y \
     apt-transport-https ca-certificates gnupg-agent software-properties-common
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -101,17 +108,22 @@ global-install() {
     stable"
     apt update
     apt install -y docker-ce docker-ce-cli containerd.io
+}
 
-    # CEF
+install_warsaw() {
     wget https://cloud.gastecnologia.com.br/cef/warsaw/install/GBPCEFwr64.deb
     dpkg -i GBPCEFwr64.deb
     rm GBPCEFwr64.deb
-    
-    apt autoremove -y
-    apt autoclean -y
 }
 
-local-install() {
+local_install() {
+    install_flatpaks
+    install_gnome_extensions
+    install_nvm
+    install_sdkman
+}
+
+install_flatpaks() {
     flatpak install flathub -y \
     com.nextcloud.desktopclient.nextcloud \
     com.github.debauchee.barrier \
@@ -135,26 +147,50 @@ local-install() {
     com.getpostman.Postman \
     com.axosoft.GitKraken \
     net.poedit.Poedit
+}
+
+install_gnome_extensions() {
+    install_gnome_extension "dash-to-dockmicxgx.gmail.com.v69.shell-extension.zip"
+    install_gnome_extension "radiohslbck.gmail.com.v14.shell-extension.zip"
+    install_gnome_extension "sound-output-device-chooserkgshank.net.v32.shell-extension.zip"
+}
+
+install_gnome_extension() {
+    local tmp_dir
+    tmp_dir=`mktemp -d`
     
-    # nvm
+    wget "https://extensions.gnome.org/extension-data/$1"
+    unzip -q "$1" -d "$tmp_dir/"
+    
+    local uuid
+    uuid=`cat $tmp_dir/metadata.json | grep uuid | cut -d \" -f4`
+    local extension_dir
+    extension_dir="$HOME/.local/share/gnome-shell/extensions/$uuid"
+
+    mkdir -p "$extension_dir"
+    rsync -auvP $tmp_dir/* "$extension_dir"
+       
+    rm -rf "$1" "$tmp_dir"
+}
+
+install_nvm() {
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    export nvm_dir="$HOME/.nvm"
+    [ -s "$nvm_dir/nvm.sh" ] && \. "$nvm_dir/nvm.sh"
     nvm install lts/*
-    
-    # SDKManager
+}
+
+install_sdkman() {
     curl -s "https://get.sdkman.io" | bash
-    export SDKMAN_DIR="/home/lzkill/.sdkman"
-    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && \. "$HOME/.sdkman/bin/sdkman-init.sh"
+    export sdkman_dir="$HOME/.sdkman"
+    [[ -s "$sdkman_dir/bin/sdkman-init.sh" ]] && \. "$sdkman_dir/bin/sdkman-init.sh"
     sdk install java 11.0.9.j9-adpt
-    mkdir -p "$HOME/Software/{jdk1.7.0_80,jdk1.8.0_271}"
-    sdk install java 8.0.271-oracle $HOME/Software/jdk1.8.0_271
-    sdk install java 7.0.80-oracle $HOME/Software/jdk1.7.0_80
+    sdk install java 8.0.271-oracle "$HOME/Software/jdk1.8.0_271"
+    sdk install java 7.0.80-oracle "$HOME/Software/jdk1.7.0_80"
 }
 
 restore() {
-    LATEST_BACKUP_DIR="$BACKUP_DIR/latest"
-    rsync $RSYNC_OPTIONS "$LATEST_BACKUP_DIR/*" /
+    rsync $rsync_options "$backup_dir/latest/*" /
     sync
 }
 
@@ -166,15 +202,25 @@ fi
 
 # See https://unix.stackexchange.com/a/337820
 # See https://unix.stackexchange.com/a/269080
-while getopts "bcdir" opt
+while getopts "bcir" opt
 do
     case "$opt" in
-        b ) sudo -E bash -c "$(declare -f backup); backup" ;;
-        c ) sudo -E bash -c "$(declare -f global-configure); global-configure" && local-configure ;;
-        d ) download ;;
-        i ) sudo -E bash -c "$(declare -f global-install); global-install" && local-install ;;
-        r ) sudo -E bash -c "$(declare -f restore); restore" ;;
-        ? ) help ;;
+        b ) 
+            sudo -E bash -c "$(declare -f backup); backup"
+            ;;
+        c ) 
+            sudo -E bash -c "$(declare -f global_configure); global_configure"
+            local_configure
+            ;;
+        i ) 
+            sudo -E bash -c "$(declare -f global_install); global_install"
+            local_install
+            ;;
+        r )
+            sudo -E bash -c "$(declare -f restore); restore"
+            ;;
+        ? )
+            help
+            ;;
     esac
 done
-
