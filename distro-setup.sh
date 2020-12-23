@@ -153,6 +153,7 @@ install_gnome_extensions() {
     install_gnome_extension "dash-to-dockmicxgx.gmail.com.v69.shell-extension.zip"
     install_gnome_extension "radiohslbck.gmail.com.v14.shell-extension.zip"
     install_gnome_extension "sound-output-device-chooserkgshank.net.v32.shell-extension.zip"
+    install_gnome_extension "update-extensions@franglais125.gmail.com.v9.shell-extension.zip"
 }
 
 install_gnome_extension() {
