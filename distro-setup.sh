@@ -46,6 +46,7 @@ backup() {
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/FortiClient" \
     "$home_dir/.local/share/gnome-shell/extensions" \
+    "$home_dir/.openfortigui" \
     "$home_dir/rdp" \
     "$home_dir/snap" \
     "$home_dir/Desktop" \
@@ -59,6 +60,7 @@ backup() {
     /etc/default/locale \
     /etc/hostname \
     /etc/hosts \
+    /etc/systemd/resolved.conf \
     /etc/docker/daemon.json \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
@@ -77,12 +79,28 @@ configure_gnome() {
   gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 }
 
+install_system_wide() {
+  install_apt_packages
+  install_forticlient
+  install_docker
+  install_warsaw
+}
+
+install_apt_packages() {
+  apt install -y \
+    vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
+    nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
+    git-lfs ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
+    code snapd openfortivpn
+
+  apt autoremove -y
+  apt autoclean -y
+}
+
 install_forticlient() {
-  wget -O - https://repo.fortinet.com/repo/6.4/ubuntu/DEB-GPG-KEY | apt-key add -
-  echo "deb [arch=amd64] https://repo.fortinet.com/repo/6.4/ubuntu/ /bionic multiverse" > \
-    /etc/apt/sources.list.d/forticlient.list
-  apt update
-  apt install -y forticlient
+  wget https://apt.iteas.at/iteas/pool/main/o/openfortigui/openfortigui_0.9.3-1_amd64_focal.deb
+  dpkg -i openfortigui_0.9.3-1_amd64_focal.deb
+  rm openfortigui_0.9.3-1_amd64_focal.deb
 }
 
 install_docker() {
@@ -105,19 +123,14 @@ install_warsaw() {
   rm GBPCEFwr64.deb
 }
 
-install_apt_packages() {
-  apt install -y \
-    vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
-    nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
-    git-lfs ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
-    code snapd
+install_user_wide() {
+  install_flatpaks
+  install_snaps
+  install_nvm
+  install_sdkman
 
-  install_forticlient
-  install_docker
-  install_warsaw
-
-  apt autoremove -y
-  apt autoclean -y
+  install_gnome_extensions
+  killall -SIGQUIT gnome-shell
 }
 
 install_flatpaks() {
@@ -149,6 +162,22 @@ install_snaps() {
   snap install snap-store
 }
 
+install_nvm() {
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+  export nvm_dir="$HOME/.nvm"
+  [ -s "$nvm_dir/nvm.sh" ] && \. "$nvm_dir/nvm.sh"
+  nvm install lts/*
+}
+
+install_sdkman() {
+  curl -s "https://get.sdkman.io" | bash
+  export sdkman_dir="$HOME/.sdkman"
+  [[ -s "$sdkman_dir/bin/sdkman-init.sh" ]] && \. "$sdkman_dir/bin/sdkman-init.sh"
+  sdk install java 11.0.9.j9-adpt
+  sdk install java 8.0.271-oracle "$HOME/Software/jdk1.8.0_271"
+  sdk install java 7.0.80-oracle "$HOME/Software/jdk1.7.0_80"
+}
+
 install_gnome_extension() {
   local tmp_dir
   tmp_dir=$(mktemp -d)
@@ -174,32 +203,13 @@ install_gnome_extensions() {
   install_gnome_extension "update-extensions@franglais125.gmail.com.v9.shell-extension.zip"
 }
 
-install_nvm() {
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-  export nvm_dir="$HOME/.nvm"
-  [ -s "$nvm_dir/nvm.sh" ] && \. "$nvm_dir/nvm.sh"
-  nvm install lts/*
-}
-
-install_sdkman() {
-  curl -s "https://get.sdkman.io" | bash
-  export sdkman_dir="$HOME/.sdkman"
-  [[ -s "$sdkman_dir/bin/sdkman-init.sh" ]] && \. "$sdkman_dir/bin/sdkman-init.sh"
-  sdk install java 11.0.9.j9-adpt
-  sdk install java 8.0.271-oracle "$HOME/Software/jdk1.8.0_271"
-  sdk install java 7.0.80-oracle "$HOME/Software/jdk1.7.0_80"
-}
-
-install_system_wide() {
-  install_apt_packages
-  install_forticlient
-  install_warsaw
-  install_docker
-}
-
 restore() {
   rsync $rsync_options "$backup_dir/latest/" /
   sync
+}
+
+run_with_sudo() {
+  sudo -E bash -c "$(declare -f); $1"
 }
 
 if [ $# -eq 0 ]; then
@@ -212,26 +222,18 @@ fi
 while getopts "bcir" opt; do
   case "$opt" in
     b)
-      sudo -E bash -c "$(declare -f backup); backup"
+      run_with_sudo "backup"
       ;;
     c)
-      sudo -E bash -c "$(declare -f configure_system); configure_system"
+      run_with_sudo "configure_system"
       configure_gnome
       ;;
     i)
-      install_functions="install_apt_packages install_forticlient install_warsaw install_docker install_system_wide"
-      sudo -E bash -c "$(declare -f $install_functions); install_system_wide"
-
-      install_flatpaks
-      install_snaps
-      install_nvm
-      install_sdkman
-
-      install_gnome_extensions
-      killall -SIGQUIT gnome-shell
+      run_with_sudo "install_system_wide"
+      install_user_wide
       ;;
     r)
-      sudo -E bash -c "$(declare -f restore); restore"
+      run_with_sudo "restore"
       ;;
     ?)
       help
