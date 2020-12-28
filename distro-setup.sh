@@ -81,6 +81,7 @@ configure_gnome() {
 
 install_system_wide() {
   install_apt_packages
+  install_snaps
   install_forticlient
   install_docker
   install_warsaw
@@ -125,7 +126,6 @@ install_warsaw() {
 
 install_user_wide() {
   install_flatpaks
-  install_snaps
   install_nvm
   install_sdkman
 
