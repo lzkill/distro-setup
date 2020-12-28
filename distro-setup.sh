@@ -155,7 +155,9 @@ install_flatpaks() {
     io.dbeaver.DBeaverCommunity \
     com.getpostman.Postman \
     com.axosoft.GitKraken \
-    net.poedit.Poedit
+    net.poedit.Poedit \
+    org.gnome.Evolution \
+    flathub com.meetfranz.Franz
 }
 
 install_snaps() {
