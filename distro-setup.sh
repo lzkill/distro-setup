@@ -45,6 +45,7 @@ backup() {
     "$home_dir/.config/VirtualBox" \
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/FortiClient" \
+    "$home_dir/.config/Nextcloud" \
     "$home_dir/.local/share/gnome-shell/extensions" \
     "$home_dir/.openfortigui" \
     "$home_dir/rdp" \
@@ -53,6 +54,7 @@ backup() {
     "$home_dir/Documents" \
     "$home_dir/Downloads" \
     "$home_dir/Dropbox" \
+    "$home_dir/Nextcloud" \
     "$home_dir/Pictures" \
     "$home_dir/Projects" \
     "$home_dir/Software" \
@@ -95,10 +97,11 @@ install_system_wide() {
 
 install_apt_packages() {
   apt install -y \
-    vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
-    nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
-    git-lfs ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
-    code snapd openfortivpn nfs-common
+    vim htop nfs-common openfortivpn xsane snapd \
+    google-chrome-stable synaptic gnome-tweak-tool nautilus-admin \
+    virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
+    ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
+    git git-flow git-lfs curl httpie gawk code
 
   apt autoremove -y
   apt autoclean -y
@@ -141,7 +144,6 @@ install_user_wide() {
 
 install_flatpaks() {
   flatpak install flathub -y \
-    com.nextcloud.desktopclient.nextcloud \
     com.github.debauchee.barrier \
     com.spotify.Client \
     org.inkscape.Inkscape \
@@ -160,7 +162,6 @@ install_flatpaks() {
     org.apache.netbeans \
     io.dbeaver.DBeaverCommunity \
     com.getpostman.Postman \
-    com.axosoft.GitKraken \
     net.poedit.Poedit \
     org.gnome.Evolution \
     com.getferdi.Ferdi
