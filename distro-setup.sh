@@ -72,6 +72,12 @@ backup() {
 configure_system() {
   hostname vostro
   locale-gen pt_BR.UTF-8
+
+  mkdir -p /mnt/nfs/dwh2
+  mkdir -p /mnt/nfs/dwp2
+  mkdir -p /mnt/nfs/hom-nfs
+
+  cat nfs.conf >> /etc/fstab
 }
 
 configure_gnome() {
@@ -92,7 +98,7 @@ install_apt_packages() {
     vim htop google-chrome-stable git git-flow curl httpie gawk xsane \
     nautilus-dropbox virtualbox synaptic gnome-tweak-tool nautilus-admin \
     git-lfs ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
-    code snapd openfortivpn
+    code snapd openfortivpn nfs-common
 
   apt autoremove -y
   apt autoclean -y
@@ -114,7 +120,7 @@ install_docker() {
     $(lsb_release -cs) \
     stable"
   apt update
-  apt install -y docker-ce docker-ce-cli containerd.io
+  apt install -y docker-ce docker-ce-cli containerd.io docker-compose
   usermod -aG docker lzkill
 }
 
