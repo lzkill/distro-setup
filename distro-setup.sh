@@ -62,7 +62,8 @@ backup() {
     /etc/default/locale \
     /etc/hostname \
     /etc/hosts \
-    /etc/systemd/resolved.conf \
+    /etc/systemd/network/100-ppp0.network \
+    /etc/systemd/resolved.conf.d/cesan.conf \
     /etc/docker/daemon.json \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
