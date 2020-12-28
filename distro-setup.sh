@@ -157,7 +157,7 @@ install_flatpaks() {
     com.axosoft.GitKraken \
     net.poedit.Poedit \
     org.gnome.Evolution \
-    flathub com.meetfranz.Franz
+    com.getferdi.Ferdi
 }
 
 install_snaps() {
