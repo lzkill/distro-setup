@@ -66,6 +66,7 @@ backup() {
     /etc/systemd/network/100-ppp0.network \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
+    /usr/local/bin/gtag \
     "$latest_backup_dir/"
 
   sync
