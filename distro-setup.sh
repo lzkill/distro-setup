@@ -67,6 +67,8 @@ backup() {
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
     /usr/local/bin/gtag \
+    /usr/local/bin/gpush \
+    /usr/share/mysql-workbench/data/code_editor.xml \
     "$latest_backup_dir/"
 
   sync
@@ -90,6 +92,7 @@ configure_gnome() {
 
 install_system_wide() {
   install_apt_packages
+  install_offline_packages
   install_snaps
   install_forticlient
   install_docker
@@ -98,14 +101,19 @@ install_system_wide() {
 
 install_apt_packages() {
   apt install -y \
-    vim htop nfs-common openfortivpn xsane snapd \
-    google-chrome-stable synaptic gnome-tweak-tool nautilus-admin \
+    ubuntu-restricted-extras vim htop pv nfs-common xsane snapd \
+    google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
-    ubuntu-restricted-extras gir1.2-gst-plugins-base-1.0 \
-    git git-flow git-lfs curl httpie gawk code
+    git git-flow git-lfs curl httpie gawk code uchardet \
+    libzip5 \ # MySQL Workbench
+    gir1.2-gst-plugins-base-1.0 # Gnome radio extension
 
   apt autoremove -y
   apt autoclean -y
+}
+
+install_offline_packages() {
+  dpkg -i "$home_dir/Downloads/Installers/*.deb"
 }
 
 install_forticlient() {
