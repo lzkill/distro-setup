@@ -104,7 +104,7 @@ install_apt_packages() {
     ubuntu-restricted-extras vim htop pv nfs-common xsane snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
-    git git-flow git-lfs curl httpie gawk code uchardet \
+    git git-flow git-lfs curl httpie gawk code uchardet recode \
     libzip5 \ # MySQL Workbench
     gir1.2-gst-plugins-base-1.0 # Gnome radio extension
 
