@@ -77,6 +77,8 @@ backup() {
 configure_system() {
   hostname vostro
   locale-gen pt_BR.UTF-8
+  system76-power graphics hybrid
+  systemctl enable fstrim.timer
 
   mkdir -p /mnt/nfs/dwh2
   mkdir -p /mnt/nfs/dwp2
@@ -101,9 +103,10 @@ install_system_wide() {
 
 install_apt_packages() {
   apt install -y \
-    ubuntu-restricted-extras vim htop pv nfs-common xsane snapd \
+    ubuntu-restricted-extras vim htop pv nfs-common xsane gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
+    ttf-mscorefonts-installer \
     git git-flow git-lfs curl httpie gawk code uchardet recode \
     libzip5 \ # MySQL Workbench
     gir1.2-gst-plugins-base-1.0 # Gnome radio extension
