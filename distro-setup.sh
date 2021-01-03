@@ -3,8 +3,7 @@
 set -e
 
 export home_dir="/home/lzkill"
-export backup_dir="/media/lzkill/m3/vostro"
-export rsync_options="-ahR --info=progress2 --no-inc-recursive"
+export backup_dir="/media/lzkill/m3/distro-setup"
 
 help() {
   echo ""
@@ -24,32 +23,36 @@ backup() {
   latest_backup_dir="$backup_dir/$backup_timestamp"
 
   mkdir -p "$latest_backup_dir"
-  ln -sfn "$latest_backup_dir" "$backup_dir/latest"
+  rm "$backup_dir/latest"
+  ln -s "$latest_backup_dir" "$backup_dir/latest"
 
-  rsync $rsync_options \
+  rsync -ahR --info=progress2 --no-inc-recursive \
     --exclude "$home_dir/.var/app/*/cache" \
-    "$home_dir/.var/app" \
-    "$home_dir/.vimrc" \
+    "$home_dir/.bash_aliases" \
+    "$home_dir/.bash_history" \
+    "$home_dir/.bashrc" \
+    "$home_dir/.config/Code" \
+    "$home_dir/.config/FortiClient" \
+    "$home_dir/.config/google-chrome" \
+    "$home_dir/.config/Nextcloud" \
+    "$home_dir/.config/VirtualBox" \
+    "$home_dir/.docker-remote-cli" \
+    "$home_dir/.dropbox" \
+    "$home_dir/.eclipse" \
     "$home_dir/.gitconfig" \
     "$home_dir/.gitignore" \
-    "$home_dir/.bash_aliases" \
-    "$home_dir/.bashrc" \
-    "$home_dir/.dropbox" \
-    "$home_dir/.docker-remote-cli" \
-    "$home_dir/.ssh" \
     "$home_dir/.gnupg" \
-    "$home_dir/.eclipse" \
-    "$home_dir/.vscode" \
-    "$home_dir/.visualvm/2.0.5/repository" \
-    "$home_dir/.config/Code" \
-    "$home_dir/.config/VirtualBox" \
-    "$home_dir/.config/google-chrome" \
-    "$home_dir/.config/FortiClient" \
-    "$home_dir/.config/Nextcloud" \
+    "$home_dir/.gse-radio" \
+    "$home_dir/.local/share/DBeaverData" \
     "$home_dir/.local/share/gnome-shell/extensions" \
+    "$home_dir/.local/share/Trash" \
+    "$home_dir/.mysql/workbench" \
     "$home_dir/.openfortigui" \
-    "$home_dir/rdp" \
-    "$home_dir/snap" \
+    "$home_dir/.ssh" \
+    "$home_dir/.var/app" \
+    "$home_dir/.vimrc" \
+    "$home_dir/.visualvm/2.0.5/repository" \
+    "$home_dir/.vscode" \
     "$home_dir/Desktop" \
     "$home_dir/Documents" \
     "$home_dir/Downloads" \
@@ -57,17 +60,18 @@ backup() {
     "$home_dir/Nextcloud" \
     "$home_dir/Pictures" \
     "$home_dir/Projects" \
+    "$home_dir/snap" \
     "$home_dir/Software" \
     "$home_dir/VirtualBox VMs" \
     /etc/default/locale \
+    /etc/docker/daemon.json \
     /etc/hostname \
     /etc/hosts \
-    /etc/docker/daemon.json \
     /etc/systemd/network/100-ppp0.network \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
-    /usr/local/bin/gtag \
     /usr/local/bin/gpush \
+    /usr/local/bin/gtag \
     /usr/share/mysql-workbench/data/code_editor.xml \
     "$latest_backup_dir/"
 
@@ -75,16 +79,13 @@ backup() {
 }
 
 configure_system() {
-  hostname vostro
+  hostname rbs-adds64819
   locale-gen pt_BR.UTF-8
   system76-power graphics hybrid
   systemctl enable fstrim.timer
 
-  mkdir -p /mnt/nfs/dwh2
-  mkdir -p /mnt/nfs/dwp2
-  mkdir -p /mnt/nfs/hom-nfs
-
-  cat nfs.conf >> /etc/fstab
+  mkdir -p /mnt/nfs/{dwh2,dwp2,hom-nfs}
+  cat nfs.conf >>/etc/fstab
 }
 
 configure_gnome() {
@@ -106,17 +107,19 @@ install_apt_packages() {
     ubuntu-restricted-extras vim htop pv nfs-common xsane gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
-    ttf-mscorefonts-installer \
-    git git-flow git-lfs curl httpie gawk code uchardet recode \
-    libzip5 \ # MySQL Workbench
-    gir1.2-gst-plugins-base-1.0 # Gnome radio extension
+    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer
 
   apt autoremove -y
   apt autoclean -y
 }
 
 install_offline_packages() {
-  dpkg -i "$home_dir/Downloads/Installers/*.deb"
+  # MySQL Workbench
+  apt install -y libzip5
+
+  local latest_backup_dir
+  latest_backup_dir=$(readlink -f $backup_dir/latest)
+  dpkg -i "$latest_backup_dir/$home_dir/Downloads/Installers/*.deb"
 }
 
 install_forticlient() {
@@ -218,14 +221,18 @@ install_gnome_extension() {
 }
 
 install_gnome_extensions() {
+  apt install -y gir1.2-gst-plugins-base-1.0
   install_gnome_extension "dash-to-dockmicxgx.gmail.com.v69.shell-extension.zip"
+
   install_gnome_extension "radiohslbck.gmail.com.v14.shell-extension.zip"
   install_gnome_extension "sound-output-device-chooserkgshank.net.v32.shell-extension.zip"
   install_gnome_extension "update-extensions@franglais125.gmail.com.v9.shell-extension.zip"
 }
 
 restore() {
-  rsync $rsync_options "$backup_dir/latest/" /
+  local latest_backup_dir
+  latest_backup_dir=$(readlink -f $backup_dir/latest)
+  rsync -ah --info=progress2 --no-inc-recursive "$latest_backup_dir/" /
   sync
 }
 
