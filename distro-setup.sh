@@ -88,6 +88,7 @@ configure_system() {
   locale-gen pt_BR.UTF-8
   system76-power graphics hybrid
   systemctl enable fstrim.timer
+  systemctl enable systemd-networkd
 
   mkdir -p /mnt/nfs/{dwh2,dwp2,hom-nfs}
   cat nfs.conf >>/etc/fstab
