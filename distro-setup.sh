@@ -57,6 +57,7 @@ backup() {
     "$home_dir/.vimrc" \
     "$home_dir/.visualvm/2.0.5/repository" \
     "$home_dir/.vscode" \
+    "$home_dir/*.sh" \
     "$home_dir/Desktop" \
     "$home_dir/Documents" \
     "$home_dir/Downloads" \
