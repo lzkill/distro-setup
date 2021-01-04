@@ -113,7 +113,8 @@ install_apt_packages() {
     ubuntu-restricted-extras vim htop pv nfs-common xsane gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
-    gir1.2-gst-plugins-base-1.0 libzip5 \
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
     git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap
 
   apt autoremove -y
