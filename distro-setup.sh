@@ -32,6 +32,7 @@ backup() {
     "$home_dir/.bash_history" \
     "$home_dir/.bashrc" \
     "$home_dir/.config/Code" \
+    "$home_dir/.config/evolution" \
     "$home_dir/.config/FortiClient" \
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/Nextcloud" \
@@ -43,11 +44,14 @@ backup() {
     "$home_dir/.gitignore" \
     "$home_dir/.gnupg" \
     "$home_dir/.gse-radio" \
+    "$home_dir/.local/share/evolution" \
     "$home_dir/.local/share/DBeaverData" \
     "$home_dir/.local/share/gnome-shell/extensions" \
     "$home_dir/.local/share/Trash" \
+    "$home_dir/.nvm" \
     "$home_dir/.mysql/workbench" \
     "$home_dir/.openfortigui" \
+    "$home_dir/.sdkman" \
     "$home_dir/.ssh" \
     "$home_dir/.var/app" \
     "$home_dir/.vimrc" \
@@ -103,23 +107,29 @@ install_system_wide() {
 }
 
 install_apt_packages() {
+  echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
+
   apt install -y \
     ubuntu-restricted-extras vim htop pv nfs-common xsane gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
-    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer
+    gir1.2-gst-plugins-base-1.0 libzip5 \
+    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap
 
   apt autoremove -y
   apt autoclean -y
 }
 
 install_offline_packages() {
-  # MySQL Workbench
-  apt install -y libzip5
-
   local latest_backup_dir
-  latest_backup_dir=$(readlink -f $backup_dir/latest)
-  dpkg -i "$latest_backup_dir/$home_dir/Downloads/Installers/*.deb"
+  latest_backup_dir=$(readlink -f $backup_dir/latest$home_dir/Downloads/Installers)
+  pushd . && cd "$latest_backup_dir"
+  dpkg -i *.deb
+  popd
+}
+
+install_snaps() {
+  snap install snap-store
 }
 
 install_forticlient() {
@@ -150,17 +160,11 @@ install_warsaw() {
 
 install_user_wide() {
   install_flatpaks
-  install_nvm
-  install_sdkman
-
-  install_gnome_extensions
-  killall -SIGQUIT gnome-shell
 }
 
 install_flatpaks() {
-  flatpak install flathub -y \
+  flatpak install -y flathub \
     com.github.debauchee.barrier \
-    com.spotify.Client \
     org.inkscape.Inkscape \
     org.gimp.GIMP \
     com.microsoft.Teams \
@@ -179,54 +183,8 @@ install_flatpaks() {
     com.getpostman.Postman \
     net.poedit.Poedit \
     org.gnome.Evolution \
-    com.getferdi.Ferdi
-}
-
-install_snaps() {
-  snap install snap-store
-}
-
-install_nvm() {
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-  export nvm_dir="$HOME/.nvm"
-  [ -s "$nvm_dir/nvm.sh" ] && \. "$nvm_dir/nvm.sh"
-  nvm install lts/*
-}
-
-install_sdkman() {
-  curl -s "https://get.sdkman.io" | bash
-  export sdkman_dir="$HOME/.sdkman"
-  [[ -s "$sdkman_dir/bin/sdkman-init.sh" ]] && \. "$sdkman_dir/bin/sdkman-init.sh"
-  sdk install java 11.0.9.j9-adpt
-  sdk install java 8.0.271-oracle "$HOME/Software/jdk1.8.0_271"
-  sdk install java 7.0.80-oracle "$HOME/Software/jdk1.7.0_80"
-}
-
-install_gnome_extension() {
-  local tmp_dir
-  tmp_dir=$(mktemp -d)
-
-  wget "https://extensions.gnome.org/extension-data/$1"
-  unzip -q "$1" -d "$tmp_dir/"
-
-  local uuid
-  uuid=$(grep uuid "$tmp_dir/metadata.json" | cut -d \" -f4)
-  local extension_dir
-  extension_dir="$HOME/.local/share/gnome-shell/extensions/$uuid"
-
-  mkdir -p "$extension_dir"
-  rsync -auvP "$tmp_dir/" "$extension_dir/"
-
-  rm -rf "$1" "$tmp_dir"
-}
-
-install_gnome_extensions() {
-  apt install -y gir1.2-gst-plugins-base-1.0
-  install_gnome_extension "dash-to-dockmicxgx.gmail.com.v69.shell-extension.zip"
-
-  install_gnome_extension "radiohslbck.gmail.com.v14.shell-extension.zip"
-  install_gnome_extension "sound-output-device-chooserkgshank.net.v32.shell-extension.zip"
-  install_gnome_extension "update-extensions@franglais125.gmail.com.v9.shell-extension.zip"
+    com.getferdi.Ferdi \
+    com.spotify.Client
 }
 
 restore() {
@@ -245,8 +203,6 @@ if [ $# -eq 0 ]; then
   help
 fi
 
-# See https://unix.stackexchange.com/a/337820
-# See https://unix.stackexchange.com/a/269080
 while getopts "bcir" opt; do
   case "$opt" in
     b)
