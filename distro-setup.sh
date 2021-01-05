@@ -51,6 +51,7 @@ backup() {
     "$home_dir/.nvm" \
     "$home_dir/.mysql/workbench" \
     "$home_dir/.openfortigui" \
+    "$home_dir/.pam_environment" \
     "$home_dir/.sdkman" \
     "$home_dir/.ssh" \
     "$home_dir/.var/app" \
@@ -127,7 +128,7 @@ install_offline_packages() {
   local latest_backup_dir
   latest_backup_dir=$(readlink -f $backup_dir/latest$home_dir/Downloads/Installers)
   pushd . && cd "$latest_backup_dir"
-  dpkg -i *.deb
+  dpkg -i ./*.deb
   popd
 }
 
