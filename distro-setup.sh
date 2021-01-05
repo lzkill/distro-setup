@@ -192,10 +192,31 @@ install_flatpaks() {
 }
 
 restore() {
+  local_backup
+
   local latest_backup_dir
   latest_backup_dir=$(readlink -f $backup_dir/latest)
   rsync -ah --info=progress2 --no-inc-recursive "$latest_backup_dir/" /
   sync
+}
+
+# Make local backups for files that may contain
+# important stuff after a fresh install
+local_backup() {
+  local local_backup_dir
+  local_backup_dir="$home_dir/local_backup"
+  mkdir -p "$local_backup_dir"
+
+  rsync -ah --ignore-errors --info=progress2 --no-inc-recursive \
+    "$home_dir/.bashrc" \
+    "$home_dir/.gitconfig" \
+    "$home_dir/.pam_environment" \
+    "$home_dir/.ssh" \
+    /etc/default/locale \
+    /etc/docker/daemon.json \
+    /etc/hostname \
+    /etc/hosts \
+    "$local_backup_dir/"
 }
 
 run_with_sudo() {
