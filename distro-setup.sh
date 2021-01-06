@@ -52,13 +52,14 @@ backup() {
     "$home_dir/.mysql/workbench" \
     "$home_dir/.openfortigui" \
     "$home_dir/.pam_environment" \
+    "$home_dir/.profile" \
     "$home_dir/.sdkman" \
     "$home_dir/.ssh" \
     "$home_dir/.var/app" \
     "$home_dir/.vimrc" \
     "$home_dir/.visualvm/2.0.5/repository" \
     "$home_dir/.vscode" \
-    "$home_dir/*.sh" \
+    "$home_dir/.workplaces" \
     "$home_dir/Desktop" \
     "$home_dir/Documents" \
     "$home_dir/Downloads" \
@@ -66,6 +67,7 @@ backup() {
     "$home_dir/Nextcloud" \
     "$home_dir/Pictures" \
     "$home_dir/Projects" \
+    "$home_dir/scripts" \
     "$home_dir/snap" \
     "$home_dir/Software" \
     "$home_dir/VirtualBox VMs" \
