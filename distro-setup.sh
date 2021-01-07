@@ -121,7 +121,7 @@ install_apt_packages() {
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
     git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap \
-    mysql-client
+    mysql-client git-svn
 
   apt autoremove -y
   apt autoclean -y
@@ -191,7 +191,8 @@ install_flatpaks() {
     net.poedit.Poedit \
     org.gnome.Evolution \
     com.getferdi.Ferdi \
-    com.spotify.Client
+    com.spotify.Client \
+    com.syntevo.SmartGit
 }
 
 restore() {
