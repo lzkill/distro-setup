@@ -120,7 +120,8 @@ install_apt_packages() {
     virtualbox nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
-    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap
+    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap \
+    mysql-client
 
   apt autoremove -y
   apt autoclean -y
