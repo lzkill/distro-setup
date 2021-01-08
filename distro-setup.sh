@@ -24,7 +24,7 @@ backup() {
 
   mkdir -p "$latest_backup_dir"
   rm "$backup_dir/latest"
-  ln -s "$latest_backup_dir" "$backup_dir/latest"
+  ln -s -r "$latest_backup_dir" "$backup_dir/latest"
 
   rsync -ahR --info=progress2 --no-inc-recursive \
     --exclude "$home_dir/.var/app/*/cache" \
