@@ -24,7 +24,7 @@ backup() {
 
   mkdir -p "$latest_backup_dir"
   rm "$backup_dir/latest"
-  ln -s "$latest_backup_dir" "$backup_dir/latest"
+  ln -s -r "$latest_backup_dir" "$backup_dir/latest"
 
   rsync -ahR --info=progress2 --no-inc-recursive \
     --exclude "$home_dir/.var/app/*/cache" \
@@ -92,6 +92,7 @@ configure_system() {
   system76-power graphics hybrid
   systemctl enable fstrim.timer
   systemctl enable systemd-networkd
+  timedatectl set-local-rtc 1 --adjust-system-clock
 
   mkdir -p /mnt/nfs/{dwh2,dwp2,hom-nfs}
   cat nfs.conf >>/etc/fstab
@@ -121,6 +122,7 @@ install_apt_packages() {
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
     git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap \
+    libpython2.7 libpython2.7-minimal libpython2.7-stdlib \
     mysql-client git-svn
 
   apt autoremove -y
@@ -192,35 +194,15 @@ install_flatpaks() {
     org.gnome.Evolution \
     com.getferdi.Ferdi \
     com.spotify.Client \
-    com.syntevo.SmartGit
+    com.syntevo.SmartGit \
+    com.github.calo001.fondo
 }
 
 restore() {
-  local_backup
-
   local latest_backup_dir
   latest_backup_dir=$(readlink -f $backup_dir/latest)
   rsync -ah --info=progress2 --no-inc-recursive "$latest_backup_dir/" /
   sync
-}
-
-# Make local backups for files that may contain
-# important stuff after a fresh install
-local_backup() {
-  local local_backup_dir
-  local_backup_dir="$home_dir/local_backup"
-  mkdir -p "$local_backup_dir"
-
-  rsync -ah --ignore-errors --info=progress2 --no-inc-recursive \
-    "$home_dir/.bashrc" \
-    "$home_dir/.gitconfig" \
-    "$home_dir/.pam_environment" \
-    "$home_dir/.ssh" \
-    /etc/default/locale \
-    /etc/docker/daemon.json \
-    /etc/hostname \
-    /etc/hosts \
-    "$local_backup_dir/"
 }
 
 run_with_sudo() {
