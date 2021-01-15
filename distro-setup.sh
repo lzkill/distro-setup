@@ -2,8 +2,8 @@
 
 set -e
 
-export home_dir="/home/lzkill"
-export backup_dir="/media/lzkill/m3/distro-setup"
+export home_dir="/home/$USER"
+export backup_dir="/media/$USER/m3/distro-setup"
 
 help() {
   echo ""
@@ -93,6 +93,8 @@ configure_system() {
   systemctl enable fstrim.timer
   systemctl enable systemd-networkd
   timedatectl set-local-rtc 1 --adjust-system-clock
+  usermod -a -G vboxusers $USER
+  usermod -a -G disk $USER
 
   mkdir -p /mnt/nfs/{dwh2,dwp2,hom-nfs}
   cat nfs.conf >>/etc/fstab
@@ -159,7 +161,7 @@ install_docker() {
     stable"
   apt update
   apt install -y docker-ce docker-ce-cli containerd.io docker-compose
-  usermod -aG docker lzkill
+  usermod -aG docker $USER
 }
 
 install_warsaw() {
