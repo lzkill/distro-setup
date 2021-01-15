@@ -124,7 +124,7 @@ install_apt_packages() {
     nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
-    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap \
+    git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap python3-pip \
     libpython2.7 libpython2.7-minimal libpython2.7-stdlib \
     mysql-client git-svn
 
@@ -172,6 +172,7 @@ install_warsaw() {
 
 install_user_wide() {
   install_flatpaks
+  pip install extract-msg
 }
 
 install_flatpaks() {
