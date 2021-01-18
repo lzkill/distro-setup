@@ -105,6 +105,11 @@ configure_gnome() {
   gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 }
 
+configure_user_wide() {
+  configure_gnome
+  git config pull.rebase false
+}
+
 install_system_wide() {
   install_apt_packages
   install_offline_packages
@@ -225,7 +230,7 @@ while getopts "bcir" opt; do
       ;;
     c)
       run_with_sudo "configure_system"
-      configure_gnome
+      configure_user_wide
       ;;
     i)
       run_with_sudo "install_system_wide"
