@@ -204,7 +204,8 @@ install_flatpaks() {
     com.getferdi.Ferdi \
     com.spotify.Client \
     com.syntevo.SmartGit \
-    com.github.calo001.fondo
+    com.github.calo001.fondo \
+    org.kde.kcachegrind
 }
 
 restore() {
