@@ -107,7 +107,6 @@ configure_gnome() {
 configure_user_wide() {
   configure_gnome
   git config pull.rebase false
-  flatpak config --set languages "en;pt"
 }
 
 install_system_wide() {
@@ -181,6 +180,9 @@ install_user_wide() {
 }
 
 install_flatpaks() {
+  flatpak config --unset languages
+  flatpak config --set extra-languages "en;pt_BR"
+
   flatpak install -y flathub \
     com.github.debauchee.barrier \
     org.inkscape.Inkscape \
