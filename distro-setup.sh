@@ -32,7 +32,6 @@ backup() {
     "$home_dir/.bash_history" \
     "$home_dir/.bashrc" \
     "$home_dir/.config/Code" \
-    "$home_dir/.config/evolution" \
     "$home_dir/.config/FortiClient" \
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/Nextcloud" \
@@ -44,7 +43,6 @@ backup() {
     "$home_dir/.gitignore" \
     "$home_dir/.gnupg" \
     "$home_dir/.gse-radio" \
-    "$home_dir/.local/share/evolution" \
     "$home_dir/.local/share/DBeaverData" \
     "$home_dir/.local/share/gnome-shell/extensions" \
     "$home_dir/.local/share/Trash" \
@@ -55,6 +53,7 @@ backup() {
     "$home_dir/.profile" \
     "$home_dir/.sdkman" \
     "$home_dir/.ssh" \
+    "$home_dir/.thunderbird" \
     "$home_dir/.var/app" \
     "$home_dir/.vimrc" \
     "$home_dir/.visualvm/2.0.5/repository" \
@@ -108,6 +107,7 @@ configure_gnome() {
 configure_user_wide() {
   configure_gnome
   git config pull.rebase false
+  flatpak config --set languages "en;pt"
 }
 
 install_system_wide() {
@@ -200,12 +200,12 @@ install_flatpaks() {
     io.dbeaver.DBeaverCommunity \
     com.getpostman.Postman \
     net.poedit.Poedit \
-    org.gnome.Evolution \
     com.getferdi.Ferdi \
     com.spotify.Client \
     com.syntevo.SmartGit \
     com.github.calo001.fondo \
-    org.kde.kcachegrind
+    org.kde.kcachegrind \
+    org.mozilla.Thunderbird
 }
 
 restore() {
