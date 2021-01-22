@@ -36,6 +36,7 @@ backup() {
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/Nextcloud" \
     "$home_dir/.config/VirtualBox" \
+    "$home_dir/.davmail.properties" \
     "$home_dir/.docker-remote-cli" \
     "$home_dir/.dropbox" \
     "$home_dir/.eclipse" \
@@ -207,7 +208,8 @@ install_flatpaks() {
     com.syntevo.SmartGit \
     com.github.calo001.fondo \
     org.kde.kcachegrind \
-    org.mozilla.Thunderbird
+    org.mozilla.Thunderbird \
+    org.davmail.DavMail
 }
 
 restore() {
