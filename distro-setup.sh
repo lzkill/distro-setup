@@ -70,6 +70,7 @@ backup() {
     "$home_dir/scripts" \
     "$home_dir/snap" \
     "$home_dir/Software" \
+    "$home_dir/workspace" \
     "$home_dir/VirtualBox VMs" \
     /etc/default/locale \
     /etc/docker/daemon.json \
