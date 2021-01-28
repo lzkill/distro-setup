@@ -108,7 +108,7 @@ configure_gnome() {
 
 configure_user_wide() {
   configure_gnome
-  git config pull.rebase false
+  git config --global pull.rebase false
 }
 
 install_system_wide() {
