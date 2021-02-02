@@ -33,6 +33,7 @@ backup() {
     "$home_dir/.bashrc" \
     "$home_dir/.config/Code" \
     "$home_dir/.config/FortiClient" \
+    "$home_dir/.config/Jaspersoft\ Studio" \
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/Nextcloud" \
     "$home_dir/.config/VirtualBox" \
@@ -64,6 +65,7 @@ backup() {
     "$home_dir/Documents" \
     "$home_dir/Downloads" \
     "$home_dir/Dropbox" \
+    "$home_dir/JaspersoftWorkspace" \
     "$home_dir/Nextcloud" \
     "$home_dir/Pictures" \
     "$home_dir/Projects" \
