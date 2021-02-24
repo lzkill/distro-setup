@@ -212,7 +212,8 @@ install_flatpaks() {
     com.github.calo001.fondo \
     org.kde.kcachegrind \
     org.mozilla.Thunderbird \
-    org.davmail.DavMail
+    org.davmail.DavMail \
+    org.raspberrypi.rpi-imager
 }
 
 restore() {
