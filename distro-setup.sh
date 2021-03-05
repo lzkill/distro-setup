@@ -126,7 +126,7 @@ install_apt_packages() {
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 
   apt install -y \
-    ubuntu-restricted-extras vim htop pv nfs-common xsane gparted snapd \
+    ubuntu-restricted-extras vim htop pv nfs-common simple-scan xsane gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox virtualbox-ext-pack virtualbox-guest-additions-iso \
     nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
