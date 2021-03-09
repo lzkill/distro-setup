@@ -101,6 +101,9 @@ configure_system() {
 
   mkdir -p /mnt/nfs/{dwh2,dwp2,hom-nfs}
   cat nfs.conf >>/etc/fstab
+
+  sed -i "s/^wifi.powersave = 2/wifi.powersave = 3/" \
+    /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
 }
 
 configure_gnome() {
@@ -126,7 +129,7 @@ install_apt_packages() {
   echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 
   apt install -y \
-    ubuntu-restricted-extras vim htop pv nfs-common simple-scan xsane gparted snapd \
+    ubuntu-restricted-extras vim htop pv nfs-common simple-scan xsane anki gparted snapd \
     google-chrome-stable openfortivpn synaptic gnome-tweak-tool nautilus-admin \
     virtualbox virtualbox-ext-pack virtualbox-guest-additions-iso \
     nautilus-dropbox nextcloud-desktop nautilus-nextcloud \
