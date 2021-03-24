@@ -33,7 +33,6 @@ backup() {
     "$home_dir/.bashrc" \
     "$home_dir/.config/Code" \
     "$home_dir/.config/FortiClient" \
-    "$home_dir/.config/Jaspersoft\ Studio" \
     "$home_dir/.config/google-chrome" \
     "$home_dir/.config/Nextcloud" \
     "$home_dir/.config/VirtualBox" \
@@ -48,7 +47,7 @@ backup() {
     "$home_dir/.local/share/DBeaverData" \
     "$home_dir/.local/share/gnome-shell/extensions" \
     "$home_dir/.local/share/Trash" \
-    "$home_dir/.nvm" \
+    "$home_dir/.nodenv" \
     "$home_dir/.mysql/workbench" \
     "$home_dir/.openfortigui" \
     "$home_dir/.pam_environment" \
@@ -79,12 +78,14 @@ backup() {
     /etc/hostname \
     /etc/hosts \
     /etc/systemd/network/100-ppp0.network \
+    /usr/local/bin/recodeif \
     /usr/local/bin/file.io \
     /usr/local/bin/git-summary \
     /usr/local/bin/gpush \
     /usr/local/bin/gtag \
     /usr/share/mysql-workbench/data/code_editor.xml \
     "$latest_backup_dir/"
+    #"$home_dir/.config/Jaspersoft\ Studio" \
 
   sync
 }
@@ -92,7 +93,7 @@ backup() {
 configure_system() {
   hostname rbs-adds64819
   locale-gen pt_BR.UTF-8
-  system76-power graphics hybrid
+  system76-power graphics nvidia
   systemctl enable fstrim.timer
   systemctl enable systemd-networkd
   timedatectl set-local-rtc 1 --adjust-system-clock
