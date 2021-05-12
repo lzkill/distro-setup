@@ -137,7 +137,7 @@ install_apt_packages() {
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gir1.2-gst-plugins-base-1.0 libzip5 \
     git git-flow git-lfs curl httpie gawk code uchardet recode grub-customizer nmap python3-pip \
-    libpython2.7 libpython2.7-minimal libpython2.7-stdlib \
+    libpython2.7 libpython2.7-minimal libpython2.7-stdlib libgconf-2-4 \
     mysql-client git-svn
 
   apt autoremove -y
@@ -217,7 +217,9 @@ install_flatpaks() {
     org.kde.kcachegrind \
     org.mozilla.Thunderbird \
     org.davmail.DavMail \
-    org.raspberrypi.rpi-imager
+    org.raspberrypi.rpi-imager \
+    com.jgraph.drawio.desktop \
+    com.discordapp.Discord
 }
 
 restore() {
