@@ -37,7 +37,7 @@ backup() {
     "$home_dir/.config/Nextcloud" \
     "$home_dir/.config/VirtualBox" \
     "$home_dir/.davmail.properties" \
-    "$home_dir/.docker-remote-cli" \
+    "$home_dir/.docker-certs" \
     "$home_dir/.dropbox" \
     "$home_dir/.eclipse" \
     "$home_dir/.gitconfig" \
