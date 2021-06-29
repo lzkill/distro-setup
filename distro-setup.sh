@@ -153,7 +153,7 @@ install_offline_packages() {
 }
 
 install_snaps() {
-  snap install snap-store
+  snap install snap-store authy
 }
 
 install_forticlient() {
